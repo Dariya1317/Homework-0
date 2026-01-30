@@ -1,4 +1,9 @@
 package edu.narxoz.galactic.drones;
 public class LightDrone extends Drone { 
-    
+    public LightDrone(String id, double maxPlayloadKg){
+        super(id, maxPlayloadKg)
+    }
+
+    @Override 
+    public double speedKmPerMin(){}
  }
