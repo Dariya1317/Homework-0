@@ -1,4 +1,38 @@
 package edu.narxoz.galactic.dispatcher;
 public class Dispatcher { 
-
- }
+    public Result assignTask(DeliveryTask task, Drone drone) {
+        if (task == null || drone == null) {
+            return new Result(false, "can't be null")
+        }
+        if (drone.getStatus() != DroneStatus.IDLE) {
+            return new Result(false, "drone is't IDLE");
+        }
+        if (task.getCargo().getWeightKg() > drone.getMaxPayloadKg()) {
+            return new Result(false, "cargo exceeds drone capacity");
+        }   
+        if (task.getState() != TaskState.CREATED) {
+            return new Result(false, "task is't in CREATED");
+        } 
+        task.setAssignedDrone(drone);
+        task.setState(TaskState.ASSIGNED);
+        drone.setStatus(DroneStatus.IN_FLIGHT);
+        return new Result(true, null);
+    }
+    public Result completeTask(DeliveryTask task) {
+        if (task == null) {
+            return new Result(false, "task can't be null");
+        }
+        if (task.getState() != TaskState.ASSIGNED) {
+            return new Result(false, "task state must be ASSIGNED");
+        }
+        if (task.getAssignedDrone() == null) {
+            return new Result(false, "no drone assigned to this task");
+        }
+        if (task.getAssignedDrone().getStatus() != DroneStatus.IN_FLIGHT) {
+            return new Result(false, "drone is not IN_FLIGHT");
+        }
+        task.getAssignedDrone().setStatus(DroneStatus.IDLE);
+        task.setState(TaskState.DONE);
+        return new Result(true, null);
+    } 
+}
